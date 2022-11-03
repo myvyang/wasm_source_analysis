@@ -35,18 +35,18 @@ u32_leb 段长度
 
 上一步已经拿到了段的类型和长度，这个函数里根据不同的段类型，分别解析数据。
 
-下面举例代码段的解析
-
 ### DecodeCodeSection
 
-u32_leb 代码段长度(冗余信息，上一步其实已经拿到了)
-u32_leb 代码项个数
+这里解析代码段的数据后，会生成对应的`FunctionBody`对象，后面该对象会在 https://source.chromium.org/chromium/chromium/src/+/main:v8/src/wasm/baseline/liftoff-compiler.cc;l=7735;bpv=1;bpt=0 直接编译成机器码。
 
-每个代码项目：
+## 字节码逻辑
 
-u32_leb 代码项长度
+wasm使用字节码，每个bytecode是一个字节。
 
+wasm只支持4种数值类型：i32, i64, f32, f6。
 
+wasm是严格的栈虚拟机。例如```i32.add```指令，从栈顶弹出两个量，相加后压入栈顶。每个指令的动作都是规定好的，因此可以直接验证整个指令序列的合法性。
 
+wasm支持内存读写。内存实际是一个字节数组。
 
 
