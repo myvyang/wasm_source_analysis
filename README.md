@@ -7,29 +7,17 @@ u8 为一个字节，8bits。
 
 wasm字节流的解析入口：[https://github.com/myvyang/wasm_source_analysis/blob/main/v8_source/src/api/api.cc#L2590](https://github.com/myvyang/wasm_source_analysis/blob/main/v8_source/src/api/api.cc#L2590)
 
-对module进行解析：[https://source.chromium.org/chromium/chromium/src/+/main:v8/src/wasm/module-decoder-impl.h;drc=44798fcb6d921c4a8fee8331289021a3b25b4450;l=1641](https://source.chromium.org/chromium/chromium/src/+/main:v8/src/wasm/module-decoder-impl.h;drc=44798fcb6d921c4a8fee8331289021a3b25b4450;l=1641)
+对module进行解析：https://source.chromium.org/chromium/chromium/src/+/main:v8/src/wasm/module-decoder-impl.h;drc=44798fcb6d921c4a8fee8331289021a3b25b4450;l=1641
 
-## DecodeModule
+## 输入字节解析
 
-DecodeModuleHeader 里，先读了两次 u32 ，解析 魔数 和 版本号 。
+### DecodeModuleHeader 
 
-然后不停的读段：
+u32 魔数(\x00asm)
 
-```
-    WasmSectionIterator section_iter(&decoder, tracer_);
+u32 版本号
 
-    while (ok()) {
-      // Shift the offset by the section header length
-      offset += section_iter.payload_start() - section_iter.section_start();
-      if (section_iter.section_code() != SectionCode::kUnknownSectionCode) {
-        DecodeSection(section_iter.section_code(), section_iter.payload(),
-                      offset, validate_functions);
-      }
-      // Shift the offset by the remaining section payload
-      offset += section_iter.payload_length();
-      if (!section_iter.more() || !ok()) break;
-      section_iter.advance(true);
-    }
-```
+### WasmSectionIterator::next
 
-动作实际上靠 WasmSectionIterator::next 推进。
+u8 段类型，定义在 https://source.chromium.org/chromium/chromium/src/+/main:v8/src/wasm/wasm-constants.h;drc=44798fcb6d921c4a8fee8331289021a3b25b4450;l=95
+u32 段长度
