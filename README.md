@@ -49,4 +49,7 @@ wasm是严格的栈虚拟机。例如```i32.add```指令，从栈顶弹出两个
 
 wasm支持内存读写。内存实际是一个字节数组。
 
+## 编译
+
+ExecuteLiftoffCompilation 里对字节码做了处理，然后调用```compiler->GetCode(&result.code_desc);```编译代码，这里会调用不同的后端，编译成不同平台的指令。
 
